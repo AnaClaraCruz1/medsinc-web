@@ -1,52 +1,44 @@
-# MEDSiNC Web — Etapa 8
+# MEDSiNC Web
 
-Interface web acadêmica do sistema MEDSiNC, desenvolvida separadamente do projeto Java.
+Aplicação front-end do MEDSiNC, sistema de gestão em saúde desenvolvido com HTML5, CSS3 e JavaScript.
 
-## Objetivo
-Planejar e implementar uma interface responsiva com HTML5, CSS3 e JavaScript, seguindo os requisitos revisados de cadastro e consulta de pacientes.
-
-## Estrutura
-```
-medsinc-web/
-├── index.html
-├── dashboard.html
-├── pages/
-│   ├── cadastro-paciente.html
-│   └── consulta-pacientes.html
-├── assets/
-│   ├── css/styles.css
-│   └── js/app.js
-└── docs/
-    └── wireframes.md
-```
-
-## Escopo desta versão
-- Tela de acesso demonstrativa (sem autenticação real).
-- Painel inicial e navegação entre as telas.
-- Cadastro demonstrativo de pacientes com validação de campos.
-- Consulta com filtro por ID, CPF ou nome e ação para limpar o filtro.
-- Dados fictícios armazenados apenas no navegador (localStorage).
-
-## Relação com o projeto Java
-O repositório Java `medsinc-refatorado` separa domínio, serviços e repositórios. O modelo Java atual de `Paciente` contém ID, nome, idade, endereço, contato e usuário responsável pelo cadastro. O documento de requisitos revisado, por sua vez, prevê CPF, data de nascimento e convênio, atributos que não estão presentes no modelo Java/SQL legado descrito no relatório da Etapa 6.
-
-Por isso, esta etapa mantém a interface alinhada aos requisitos revisados sem alterar nem afirmar integração com o back-end Java. A diferença entre o modelo legado e os requisitos será registrada para transparência acadêmica. Nenhum dado real de paciente deve ser utilizado.
-
-## Melhorias de segurança e identificação
-- Identificador sequencial local exibido como ID do registro.
-- CPF com máscara, validação dos dígitos verificadores e bloqueio de duplicidade na lista local.
-- Data de nascimento exibida em formato brasileiro e idade calculada automaticamente para facilitar a identificação, sem armazenar uma idade desatualizada.
-- Conteúdo dinâmico escapado antes de ser inserido na tabela, reduzindo o risco de interpretação de texto cadastrado como HTML.
-- Tratamento de falhas de leitura/gravação do armazenamento local, com aviso quando o cadastro permanecer somente na sessão.
-- Validação dos dados recuperados do armazenamento antes de utilizá-los.
-
-**Limite de segurança:** essas medidas são validações de interface, não proteção de dados em produção. O `localStorage` não é criptografado e pode ser acessado por quem utiliza o mesmo perfil do navegador. Não inserir dados reais, CPF real, informações clínicas ou credenciais. Uma versão de produção exigiria autenticação, autorização por perfil, HTTPS, API e armazenamento protegido no servidor, além de adequação à LGPD.
+## Módulos
+- **Painel:** visão geral e atalhos para os módulos.
+- **Pacientes:** cadastro e consulta por ID, CPF ou nome, com validações de identificação.
+- **Consultas:** cadastro, listagem, filtro e controle de status (agendada, realizada ou cancelada).
+- **Medicamentos e estoque:** cadastro de itens, quantidades, unidades, níveis mínimos e alerta de estoque baixo.
+- **Histórico médico:** registros por paciente, profissional, data e descrição.
+- **Usuários e perfis:** cadastro demonstrativo de usuários com perfis funcionais.
+- **Relatórios:** indicadores calculados com base nos registros locais e opção de impressão/salvamento em PDF.
+- **Backups:** registro demonstrativo de atividades; não executa cópia real de banco de dados.
 
 ## Como executar
-Abra `index.html` em um navegador moderno. Não é necessário instalar dependências ou configurar banco de dados.
+1. Baixe ou extraia o repositório.
+2. Abra `index.html` em um navegador moderno.
+3. Informe um e-mail e uma senha quaisquer para entrar no ambiente demonstrativo.
+4. Utilize a navegação lateral para acessar os módulos.
 
-## Limitações
-Esta é uma demonstração front-end. O login não autentica usuários, os convênios são opções ilustrativas e os dados são locais ao navegador. Não há API, servidor ou conexão com MySQL.
+Não é necessário instalar dependências ou configurar banco de dados para esta demonstração.
 
-## Etapa acadêmica
-Projeto desenvolvido para a Etapa 8 do Projeto Integrador: wireframes, páginas HTML, estilização CSS e validações/funcionalidades JavaScript.
+## Recursos de qualidade
+- Layout responsivo e navegação consistente.
+- Formulários com campos obrigatórios e validações.
+- Pesquisa e filtros nos módulos com listagens.
+- Confirmação antes de excluir registros.
+- Escape de conteúdo dinâmico antes de exibir dados na tabela.
+- Identificação automática de registros e alertas para estoque mínimo.
+- Tratamento de falhas do armazenamento local.
+- Indicadores e impressão de relatórios.
+
+## Armazenamento e segurança
+Os registros dos módulos são armazenados no `localStorage` do navegador. Os dados de pacientes usam armazenamento local próprio; os demais módulos usam uma área de demonstração separada. Os dados não são sincronizados entre computadores ou usuários e podem ser apagados pelo navegador.
+
+**Não utilize dados pessoais reais, CPFs reais, prontuários, informações clínicas ou credenciais.** O login é apenas uma passagem demonstrativa: não autentica, não protege páginas e não implementa autorização real por perfil. O armazenamento local não é criptografado e não é apropriado para dados sensíveis.
+
+Uma implantação real exige API e servidor, autenticação segura, senhas armazenadas com hash forte, autorização no back-end, HTTPS, validação no servidor, banco de dados protegido, trilhas de auditoria e controles adequados à LGPD. Backups reais também devem ser executados e verificados no servidor.
+
+## Arquitetura atual
+Esta entrega é uma aplicação front-end independente. Não existe integração ativa com o projeto Java, MySQL ou qualquer API. A separação permite evoluir a interface sem alterar o sistema Java existente.
+
+## Tecnologias
+HTML5 · CSS3 · JavaScript vanilla · Web Storage API
