@@ -1,4 +1,5 @@
-const STORAGE_KEY = "medsinc-web-pacientes-v1";
+const STORAGE_KEY = "medsinc-web-pacientes-v2";
+let pacientesEmMemoria = null;
 
 const pacientesIniciais = [
   { id: 1, nome: "Mariana Oliveira Santos", cpf: "529.982.247-25", nascimento: "1988-04-12", telefone: "(31)98888-1200", email: "mariana.exemplo@email.com", endereco: "Rua das Acácias, 120 - Centro", convenio: "Unimed" },
@@ -7,18 +8,46 @@ const pacientesIniciais = [
 ];
 
 function obterPacientes() {
+  if (pacientesEmMemoria) return pacientesEmMemoria;
   try {
     const dados = JSON.parse(localStorage.getItem(STORAGE_KEY));
-    if (Array.isArray(dados)) return dados;
+    if (Array.isArray(dados) && dados.every(p => p && Number.isInteger(Number(p.id)) && typeof p.nome === "string")) {
+      pacientesEmMemoria = dados;
+      return pacientesEmMemoria;
+    }
+    pacientesEmMemoria = [...pacientesIniciais];
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(pacientesEmMemoria));
   } catch (erro) {
-    console.warn("Não foi possível ler os dados locais.", erro);
+    console.warn("Armazenamento local indisponível; os dados ficarão apenas nesta sessão.", erro);
+    pacientesEmMemoria = [...pacientesIniciais];
   }
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(pacientesIniciais));
-  return [...pacientesIniciais];
+  return pacientesEmMemoria;
 }
 
 function salvarPacientes(pacientes) {
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(pacientes));
+  pacientesEmMemoria = pacientes;
+  try {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(pacientes));
+    return true;
+  } catch (erro) {
+    console.warn("Não foi possível persistir os dados neste navegador.", erro);
+    return false;
+  }
+}
+
+function calcularIdade(dataNascimento) {
+  if (!dataNascimento) return "—";
+  const [ano, mes, dia] = dataNascimento.split("-").map(Number);
+  const hoje = new Date();
+  let idade = hoje.getFullYear() - ano;
+  if (hoje.getMonth() + 1 < mes || (hoje.getMonth() + 1 === mes && hoje.getDate() < dia)) idade--;
+  return Number.isFinite(idade) && idade >= 0 ? idade : "—";
+}
+
+function formatarData(data) {
+  if (!data || !/^\d{4}-\d{2}-\d{2}$/.test(data)) return "—";
+  const [ano, mes, dia] = data.split("-");
+  return dia + "/" + mes + "/" + ano;
 }
 
 function somenteNumeros(valor) {
@@ -123,9 +152,11 @@ function configurarCadastro() {
     const pacientes = obterPacientes();
     const novo = { id: pacientes.reduce((maior, p) => Math.max(maior, Number(p.id) || 0), 0) + 1, ...dados, nome: dados.nome.trim(), cpf: formatarCPF(dados.cpf), endereco: dados.endereco.trim(), telefone: formatarTelefone(dados.telefone) };
     pacientes.push(novo);
-    salvarPacientes(pacientes);
+    const persistido = salvarPacientes(pacientes);
     form.reset();
-    feedback.textContent = "Paciente cadastrado nesta demonstração com sucesso.";
+    feedback.textContent = persistido
+      ? "Paciente cadastrado nesta demonstração com sucesso."
+      : "Cadastro mantido apenas nesta sessão; o navegador não permitiu salvar os dados.";
     feedback.className = "form-feedback";
   });
 }
@@ -144,10 +175,14 @@ function configurarConsulta() {
     const termo = campo.value.trim().toLocaleLowerCase("pt-BR");
     const registros = obterPacientes().filter(p => {
       if (!termo) return true;
-      return String(p.id).includes(termo) || somenteNumeros(p.cpf).includes(somenteNumeros(termo)) && somenteNumeros(termo).length > 0 || p.nome.toLocaleLowerCase("pt-BR").includes(termo);
+      const buscaNumerica = somenteNumeros(termo);
+      const nome = String(p.nome || "").toLocaleLowerCase("pt-BR");
+      return String(p.id).includes(termo)
+        || (buscaNumerica.length > 0 && somenteNumeros(p.cpf).includes(buscaNumerica))
+        || nome.includes(termo);
     });
     contador.textContent = registros.length + (registros.length === 1 ? " registro encontrado" : " registros encontrados");
-    tabela.innerHTML = registros.length ? registros.map(p => '<tr><td class="table-id">#' + escaparHTML(p.id) + '</td><td class="table-name">' + escaparHTML(p.nome) + '</td><td>' + escaparHTML(p.cpf) + '</td><td>' + escaparHTML(p.telefone) + '</td><td><span class="status-pill">' + escaparHTML(p.convenio) + '</span></td></tr>').join("") : '<tr><td colspan="5" class="empty-state">Nenhum paciente corresponde à pesquisa.</td></tr>';
+    tabela.innerHTML = registros.length ? registros.map(p => '<tr><td class="table-id">#' + escaparHTML(p.id) + '</td><td class="table-name">' + escaparHTML(p.nome) + '</td><td>' + escaparHTML(p.cpf) + '</td><td>' + escaparHTML(formatarData(p.nascimento)) + '</td><td>' + escaparHTML(calcularIdade(p.nascimento)) + '</td><td>' + escaparHTML(p.telefone) + '</td><td><span class="status-pill">' + escaparHTML(p.convenio) + '</span></td></tr>').join("") : '<tr><td colspan="7" class="empty-state">Nenhum paciente corresponde à pesquisa.</td></tr>';
     feedback.textContent = termo ? "Filtro aplicado aos registros demonstrativos." : "";
   };
   campo.addEventListener("input", renderizar);
