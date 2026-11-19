@@ -51,10 +51,17 @@ Wireframes estruturais iniciais da Etapa 8. A identidade visual final é aplicad
 │               │ Pesquisar por ID, CPF ou nome        │
 │               │ [____________________] [Limpar]      │
 │               │                                      │
-│               │ ID | Nome | CPF | Telefone | Ações   │
+│               │ ID | Nome | CPF | Nascimento | Idade | Telefone | Convênio   │
 │               │ ...                                  │
 └───────────────┴──────────────────────────────────────┘
 ```
+
+## Melhorias incorporadas
+- Identificador sequencial para cada registro demonstrativo.
+- Exibição da data de nascimento e cálculo automático da idade na consulta.
+- Validação do CPF e prevenção de duplicidade na base local.
+- Tratamento de falhas no armazenamento do navegador e escape de conteúdo exibido.
+- Avisos explícitos para não utilizar dados pessoais reais.
 
 ## Observação
 Os desenhos representam a organização e hierarquia das telas, não medidas finais. O front-end usa registros fictícios no navegador e não substitui a persistência Java/MySQL.
