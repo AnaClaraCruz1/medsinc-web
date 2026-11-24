@@ -59,21 +59,6 @@ function formatarCPF(valor) {
   return numeros.replace(/(\d{3})(\d)/, "$1.$2").replace(/(\d{3})(\d)/, "$1.$2").replace(/(\d{3})(\d{1,2})$/, "$1-$2");
 }
 
-function cpfValido(valor) {
-  const cpf = somenteNumeros(valor);
-  if (cpf.length !== 11 || /^(\d)\1{10}$/.test(cpf)) return false;
-  let soma = 0;
-  for (let i = 0; i < 9; i++) soma += Number(cpf[i]) * (10 - i);
-  let digito = (soma * 10) % 11;
-  if (digito === 10) digito = 0;
-  if (digito !== Number(cpf[9])) return false;
-  soma = 0;
-  for (let i = 0; i < 10; i++) soma += Number(cpf[i]) * (11 - i);
-  digito = (soma * 10) % 11;
-  if (digito === 10) digito = 0;
-  return digito === Number(cpf[10]);
-}
-
 function formatarTelefone(valor) {
   const n = somenteNumeros(valor).slice(0, 11);
   if (n.length <= 2) return n.length ? "(" + n : "";
@@ -130,8 +115,6 @@ function configurarCadastro() {
     const falhar = (campo, mensagem) => { exibirErro(campo, mensagem); valido = false; };
     if (!dados.nome.trim()) falhar("nome", "Informe o nome completo.");
     if (dados.nome.trim().length > 55) falhar("nome", "Use no máximo 55 caracteres.");
-    if (!cpfValido(dados.cpf)) falhar("cpf", "Informe um CPF válido.");
-    if (obterPacientes().some(p => somenteNumeros(p.cpf) === somenteNumeros(dados.cpf))) falhar("cpf", "Este CPF já está cadastrado.");
     if (!dados.nascimento) falhar("nascimento", "Informe a data de nascimento.");
     else {
       const data = new Date(dados.nascimento + "T00:00:00");
