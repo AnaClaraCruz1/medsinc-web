@@ -22,6 +22,12 @@ Este repositório contém uma implementação front-end independente, construíd
 - **Relatórios:** indicadores calculados a partir dos registros locais e opção de impressão ou salvamento em PDF pelo navegador.
 - **Backups:** histórico demonstrativo de atividades; não gera cópias reais de banco de dados.
 
+## Protótipo visual
+
+As telas da Etapa 8 estão documentadas no Figma, organizadas em uma página e agrupadas por área funcional: acesso e painel, gestão de pacientes e módulos administrativos.
+
+[Visualizar o projeto MEDSiNC no Figma](https://www.figma.com/design/4e4KWfnlretIXu1XjbmKBz)
+
 ## Tecnologias
 
 - HTML5
