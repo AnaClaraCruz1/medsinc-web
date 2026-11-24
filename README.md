@@ -14,7 +14,7 @@ Este repositório contém uma implementação front-end independente, construíd
 
 - **Acesso demonstrativo:** formulário de entrada que direciona ao painel. Não realiza autenticação nem valida credenciais.
 - **Painel:** visão geral e atalhos para os módulos.
-- **Pacientes:** cadastro com validação de campos, validação de CPF, formatação de CPF e telefone, prevenção de CPF duplicado e consulta por ID, CPF ou nome.
+- **Pacientes:** cadastro com validação dos campos, formatação de CPF e telefone, prevenção de CPF duplicado (sem validação matemática dos dígitos, permitindo CPFs fictícios nos testes) e consulta por ID, CPF ou nome.
 - **Consultas:** cadastro, listagem, filtro e acompanhamento de status.
 - **Medicamentos e estoque:** cadastro de itens, quantidades, unidades, níveis mínimos e sinalização de estoque baixo.
 - **Histórico médico:** registro demonstrativo de informações associadas a pacientes.
