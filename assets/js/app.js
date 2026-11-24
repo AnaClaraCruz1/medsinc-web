@@ -115,6 +115,7 @@ function configurarCadastro() {
     const falhar = (campo, mensagem) => { exibirErro(campo, mensagem); valido = false; };
     if (!dados.nome.trim()) falhar("nome", "Informe o nome completo.");
     if (dados.nome.trim().length > 55) falhar("nome", "Use no máximo 55 caracteres.");
+    if (obterPacientes().some(p => somenteNumeros(p.cpf) === somenteNumeros(dados.cpf))) falhar("cpf", "Este CPF já está cadastrado.");
     if (!dados.nascimento) falhar("nascimento", "Informe a data de nascimento.");
     else {
       const data = new Date(dados.nascimento + "T00:00:00");
